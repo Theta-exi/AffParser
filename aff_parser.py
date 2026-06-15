@@ -900,9 +900,10 @@ class AffParser:
             md = MeasureData(0, meas, 0, True, new_parser.bpm_schedule)
             md.ms = int(md)
             for name, (event_, is_active) in last_scenecontrol.items():
-                signal = '1' if is_active else '0'
-                event = Event('scenecontrol', [md, name, 0., signal])
-                new_parser.events.append(event)
+                if event_:
+                    signal = '1' if is_active else '0'
+                    event = Event('scenecontrol', [md, name, 0., signal])
+                    new_parser.events.append(event)
         return new_parser
     
     def parse_rhythm(self) -> list[MeasureData]:
