@@ -41,6 +41,40 @@ pip install numpy
 
 ## Quick Start
 
+> **Note:** To process audio (export `.ogg` files), the chart file's directory must contain a `base.ogg` audio file.
+
+### Interactive CLI Usage
+
+Run `aff_parser.py` directly and follow the interactive prompts:
+
+```bash
+python aff_parser.py
+```
+
+The interactive flow is as follows:
+
+1. **Verify BPM?** — Enter `y` to enter BPM verification mode, `n` to enter chart generation mode
+2. **Enter song name** — Enter the song name (must have corresponding data in `bpm_data.json`)
+3. **Enter AFF file path** — Enter or drag in the full path to the `.aff` chart file
+
+### BPM Verification Mode (y)
+
+Parses the `delta_time` of all rhythm points in the chart and outputs the rhythm offset distribution. Used to verify BPM data accuracy — if the errors are not centered around zero or a significant number fall outside the acceptable range (outside the vertical bars), the BPM data may be incorrect.
+
+Output format example: `...|-3,-2,-1,{0},1,2,3|...`, where braces mark the count of rhythm points with 0ms offset, numbers on both sides represent counts falling at each offset value, and vertical bars indicate the acceptable error range.
+
+### Chart Generation Mode (n)
+
+1. **Slice?** — Enter `y` to slice a segment, `n` to generate full-song speed practice
+2. If slicing: **Enter time range (ms-ms)** — e.g., `100000-120000`
+
+A `speed_practice/` or `slice_ms_ms/` folder will be generated in the chart directory, containing:
+
+- `0.ogg` / `0.aff` — 0.8x speed
+- `1.ogg` / `1.aff` — 0.9x speed
+- `base.ogg` / `2.aff` — 1.0x original speed
+- `3.ogg` / `3.aff` — 1.1x speed
+
 ### Parse a Chart
 
 ```python
@@ -99,38 +133,6 @@ from aff_parser import task1
 # Only slice the 100000ms~120000ms segment, generate 4 speed variants
 task1('Pentiment', 'path/to/2.aff', sliceQ=True, start_time=100000, end_time=120000)
 ```
-
-## Interactive CLI Usage
-
-Run `aff_parser.py` directly and follow the interactive prompts:
-
-```bash
-python aff_parser.py
-```
-
-The interactive flow is as follows:
-
-1. **Verify BPM?** — Enter `y` to enter BPM verification mode, `n` to enter chart generation mode
-2. **Enter song name** — Enter the song name (must have corresponding data in `bpm_data.json`)
-3. **Enter AFF file path** — Enter or drag in the full path to the `.aff` chart file
-
-### BPM Verification Mode (y)
-
-Parses the `delta_time` of all rhythm points in the chart and outputs the rhythm offset distribution. Used to verify BPM data accuracy — if the errors are not centered around zero or a significant number fall outside the acceptable range (outside the vertical bars), the BPM data may be incorrect.
-
-Output format example: `...|-3,-2,-1,{0},1,2,3|...`, where braces mark the count of rhythm points with 0ms offset, numbers on both sides represent counts falling at each offset value, and vertical bars indicate the acceptable error range.
-
-### Chart Generation Mode (n)
-
-1. **Slice?** — Enter `y` to slice a segment, `n` to generate full-song speed practice
-2. If slicing: **Enter time range (ms-ms)** — e.g., `100000-120000`
-
-A `speed_practice/` or `slice_ms_ms/` folder will be generated in the chart directory, containing:
-
-- `0.ogg` / `0.aff` — 0.8x speed
-- `1.ogg` / `1.aff` — 0.9x speed
-- `base.ogg` / `2.aff` — 1.0x original speed
-- `3.ogg` / `3.aff` — 1.1x speed
 
 ## Core Classes
 
@@ -231,6 +233,40 @@ pip install numpy
 
 ## 快速开始
 
+> **注意：** 如需处理音频（导出 `.ogg` 文件），谱面文件所在目录必须包含 `base.ogg` 音频文件。
+
+### 交互式 CLI 使用
+
+直接运行 `aff_parser.py`，按提示交互操作：
+
+```bash
+python aff_parser.py
+```
+
+运行后会出现以下交互流程：
+
+1. **验证 BPM？** — 输入 `y` 进入 BPM 验证模式，输入 `n` 进入谱面生成模式
+2. **请输入歌曲名** — 输入歌曲名称（需在 `bpm_data.json` 中有对应数据）
+3. **请输入 AFF 文件路径** — 输入或拖入 `.aff` 谱面的完整路径
+
+### BPM 验证模式（y）
+
+解析谱面中所有节奏点的 `delta_time`，输出节奏偏移分布。用于验证 BPM 数据的准确性——如果误差不呈中心分布或有一定数量落在允许范围外（竖线外），说明 BPM 数据可能有误。
+
+输出格式示例：`...|-3,-2,-1,{0},1,2,3|...`，其中括号标注偏移 0ms 的节奏数量，两边数字为落在各偏移值的节奏数量，竖线内为误差允许范围。
+
+### 谱面生成模式（n）
+
+1. **是否分段？** — 输入 `y` 进行分段切片，输入 `n` 生成整曲变速练习
+2. 若分段：**请输入时间范围(ms-ms)** — 如 `100000-120000`
+
+最终在谱面目录下生成 `speed_practice/` 或 `slice_ms_ms/` 文件夹，包含：
+
+- `0.ogg` / `0.aff` — 0.8x 倍速
+- `1.ogg` / `1.aff` — 0.9x 倍速
+- `base.ogg` / `2.aff` — 1.0x 原速
+- `3.ogg` / `3.aff` — 1.1x 倍速
+
 ### 解析谱面
 
 ```python
@@ -289,38 +325,6 @@ from aff_parser import task1
 # 仅切取 100000ms~120000ms 段落，生成 4 种倍速
 task1('Pentiment', 'path/to/2.aff', sliceQ=True, start_time=100000, end_time=120000)
 ```
-
-## 交互式 CLI 使用
-
-直接运行 `aff_parser.py`，按提示交互操作：
-
-```bash
-python aff_parser.py
-```
-
-运行后会出现以下交互流程：
-
-1. **验证 BPM？** — 输入 `y` 进入 BPM 验证模式，输入 `n` 进入谱面生成模式
-2. **请输入歌曲名** — 输入歌曲名称（需在 `bpm_data.json` 中有对应数据）
-3. **请输入 AFF 文件路径** — 输入或拖入 `.aff` 谱面的完整路径
-
-### BPM 验证模式（y）
-
-解析谱面中所有节奏点的 `delta_time`，输出节奏偏移分布。用于验证 BPM 数据的准确性——如果误差不呈中心分布或有一定数量落在允许范围外（竖线外），说明 BPM 数据可能有误。
-
-输出格式示例：`...|-3,-2,-1,{0},1,2,3|...`，其中括号标注偏移 0ms 的节奏数量，两边数字为落在各偏移值的节奏数量，竖线内为误差允许范围。
-
-### 谱面生成模式（n）
-
-1. **是否分段？** — 输入 `y` 进行分段切片，输入 `n` 生成整曲变速练习
-2. 若分段：**请输入时间范围(ms-ms)** — 如 `100000-120000`
-
-最终在谱面目录下生成 `speed_practice/` 或 `slice_ms_ms/` 文件夹，包含：
-
-- `0.ogg` / `0.aff` — 0.8x 倍速
-- `1.ogg` / `1.aff` — 0.9x 倍速
-- `base.ogg` / `2.aff` — 1.0x 原速
-- `3.ogg` / `3.aff` — 1.1x 倍速
 
 ## 核心类说明
 
