@@ -691,7 +691,7 @@ class AffParser:
                 audio_[-int(end_beat):] *= fade_out_env
             result_audio.append(audio_)
         return np.concatenate(result_audio), self.sample_rate, self.channels
-    def slice_practice(self, start_time: int, end_time: int, blank_measures: int = 0, repeat_times: int = None, parent_parser = None, slice_ogg: bool = True):
+    def slice_practice(self, start_time: int, end_time: int, blank_measures: int = 0, repeat_times: int = None, parent_parser = None, slice_ogg: bool = True, folder_path: str = None):
         """切片练习模式，返回新的AffParser实例。建议使用在节奏点上的物件的时间
         
         参数：
@@ -701,6 +701,7 @@ class AffParser:
         repeat_times: int: 切片重复次数，若为None，则重复次数将使得总0.8倍速长度不超过150秒
         parent_parser: AffParser: timinggroup的主谱面
         slice_ogg: bool: 是否切片ogg文件
+        folder_path: str: 切片保存的文件夹名，默认slice_ms_ms
         """
         if start_time >= end_time:
             raise ValueError("切片开始时间必须小于结束时间")
@@ -712,7 +713,7 @@ class AffParser:
 
             new_parser.song_name = self.song_name + f'_slice_{start_time}_{end_time}'
 
-            new_parser.folder_path = os.path.join(self.folder_path, f'slice_{start_time}_{end_time}')
+            new_parser.folder_path = os.path.join(self.folder_path, f'slice_{start_time}_{end_time}' if folder_path == None else folder_path)
             os.makedirs(new_parser.folder_path, exist_ok=True)
 
             new_parser.start_meas = self.bpm_schedule.ms_to_md(start_time).measures
@@ -899,9 +900,9 @@ class AffParser:
             md = MeasureData(0, meas, 0, True, new_parser.bpm_schedule)
             md.ms = int(md)
             for name, (event_, is_active) in last_scenecontrol.items():
-                if is_active:
-                    event = Event('scenecontrol', [md, name, 0., '1'])
-                    new_parser.events.append(event)
+                signal = '1' if is_active else '0'
+                event = Event('scenecontrol', [md, name, 0., signal])
+                new_parser.events.append(event)
         return new_parser
     
     def parse_rhythm(self) -> list[MeasureData]:
