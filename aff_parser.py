@@ -644,7 +644,7 @@ class AffParser:
                 return (event.data[0].ms, event.data[1].ms)
             elif event.type == 'timinggroup':
                 event.data.sort_by_time()
-                return (9999999, 9999999)
+                return (float('inf'), float('inf'))
         events.sort(key=key)
         self.events = text + events
     
@@ -747,6 +747,8 @@ class AffParser:
         first_timing = True
         last_timing = None
         last_scenecontrol = {'enwidencamera': (None, False), 'enwidenlanes': (None, False), 'hidegroup': (None, False)}
+        scenecontrol_status = {'enwidencamera': False, 'enwidenlanes': False, 'hidegroup': False}
+        scenecontrol_status_end = {'enwidencamera': False, 'enwidenlanes': False, 'hidegroup': False}
         for event in self.events:
             if event.type in ('tap', 'camera'):
                 md = event.data[0]
@@ -855,9 +857,15 @@ class AffParser:
                             new_md = remap_md(md, new_meas, new_parser.bpm_schedule)
                             new_event = Event('scenecontrol', [new_md] + event.data[1:])
                             new_parser.events.append(new_event)
+                    if dur_md:
+                        scenecontrol_status_end[event.data[1]] = event.data[-1] == '1'
                 elif meas < start_meas and len(event) == 4:
                     if last_scenecontrol[event.data[1]][0] == None or event.data[0].ms > last_scenecontrol[event.data[1]][0].data[0].ms:
                         last_scenecontrol[event.data[1]] = (event, event.data[-1] == '1')
+                        scenecontrol_status[event.data[1]] = event.data[-1] == '1'
+        for key in scenecontrol_status:
+            if scenecontrol_status[key] == scenecontrol_status_end[key]:
+                scenecontrol_status[key] = None
         # 初始timing和scenecontrol
         for t in range(repeat_times):
             if first_timing:
@@ -899,8 +907,8 @@ class AffParser:
             meas = t * measure_length
             md = MeasureData(0, meas, 0, True, new_parser.bpm_schedule)
             md.ms = int(md)
-            for name, (event_, is_active) in last_scenecontrol.items():
-                if event_:
+            for name, is_active in scenecontrol_status.items():
+                if is_active != None and t != 0:
                     signal = '1' if is_active else '0'
                     event = Event('scenecontrol', [md, name, 0., signal])
                     new_parser.events.append(event)
