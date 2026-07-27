@@ -4,4 +4,6 @@ __pycache__/
 # 针对特定谱面的临时脚本
 tmp_*.py
 
-code_map*
+# 测试文件
+test*
+jk/
