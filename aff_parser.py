@@ -677,11 +677,17 @@ class AffParser:
         audio_length = 0
         for t in range(repeat_times):
             if t == 0:
-                audio_ = self.audio_data[int(start_sample_pos - start_sample):int(end_sample_pos + end_sample)].copy()
+                start_idx = int(start_sample_pos - start_sample)
             else:
                 offset = int(sample_length * t - blank_sample) - audio_length
                 print(offset)
-                audio_ = self.audio_data[int(start_sample_pos - start_sample - blank_sample - offset):int(end_sample_pos + end_sample)].copy()
+                start_idx = int(start_sample_pos - start_sample - blank_sample - offset)
+            end_idx = int(end_sample_pos + end_sample)
+            if start_idx < 0:
+                pad = np.zeros(-start_idx) if self.channels <= 1 else np.zeros((-start_idx, self.channels))
+                audio_ = np.concatenate([pad, self.audio_data[0:max(end_idx, 0)]]).copy()
+            else:
+                audio_ = self.audio_data[start_idx:end_idx].copy()
             audio_length += len(audio_)
             if self.channels > 1:
                 audio_[:int(start_beat / 2)] *= fade_in_env[:, np.newaxis]

@@ -107,6 +107,10 @@ data = {
   "BUCHiGiRE Berserker": {
     "max_split": [96],
     "bpm": [[200,-1]]
+  },
+  "Xxium and Purple haze": {
+    "max_split": [64],
+    "bpm": [[165,-1]]
   }
 }
 a = str(data)
